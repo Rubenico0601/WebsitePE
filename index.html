@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Movie Carousel UI">
+    <title>Movie Carousel UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }|
+        .content-container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px; /* Adjust spacing between sections */
+            }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; }
+        .header .price { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .header img { width: 30px; height: 30px; }
+
+        .brand { font-size: 1.8rem; font-weight: bold; color: #00bcd4; display: flex; align-items: center; gap: 8px; }
+        .brand i { font-size: 1.8rem; color: #3f51b5; }
+
+        .toggle-container { display: flex; align-items: center; gap: 10px; }
+        .toggle-switch { position: relative; width: 50px; height: 24px; background: #ccc; border-radius: 12px; cursor: pointer; transition: background 0.3s; }
+        .toggle-switch::before { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: all 0.3s; }
+        .toggle-switch.active { background: #4caf50; }
+        .toggle-switch.active::before { transform: translateX(26px); }
+
+        .section_premium { margin: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); height: 900px; /* Set a fixed height */transition: height 0.5s, margin 0.5s, padding 0.5s, opacity 0.5s;}
+        .section-title-premium { font-size: 2.5rem; font-weight: bold; }
+
+        .section_na { margin: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .section-title-na { font-size: 2.5rem; font-weight: bold; }
+
+        .section_yaml { margin: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .section-title-yaml { font-size: 2.5rem; font-weight: bold; }
+
+        .section_genre { margin: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .section-title-genre { font-size: 2.5rem; font-weight: bold; }
+
+        .carousel { display: flex; overflow-x: scroll; gap: 15px; padding: 0 10px 15px 10px; scroll-snap-type: x mandatory; /* Optional: for smooth snapping to the next card */}
+        .carousel::-webkit-scrollbar {
+            height: 5px; /* Optional: Custom scrollbar styling */
+        }
+
+        .carousel::-webkit-scrollbar-thumb {
+            background: #888; /* Optional: Customize scrollbar color */
+            border-radius: 10px;
+        }
+
+        .carousel::-webkit-scrollbar-thumb:hover {
+            background: #555; /* Optional: Change scrollbar color when hovered */
+        }
+
+        .card { flex: 0 0 auto; border: 3px solid #f4d03f; border-radius: 8px; overflow: hidden; width: 250px;}
+        .card img { width: 100%; height: 350px; }
+
+        .banner-carousel {
+            display: flex;
+            width: 100%;
+            height: 750px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .banner-carousel img {
+            width: 100%;
+            height: 750px;
+            object-fit: cover;
+            flex-shrink: 0; /* Prevent images from shrinking */
+            transition: transform 0.5s ease;
+        }
+
+        .new-additions .card {
+            width: 300px; /* Adjust width for "New Additions" */
+            height: 200px; /* Adjust height for "New Additions" */
+        }
+
+        .new-additions .card img {
+            height: 100%;
+        }
+
+        .genre-buttons {
+            display: flex;
+            gap: 20px;
+            padding: 15px 10px;
+            justify-content: center;
+        }
+
+        .genre-btn {
+            width: 520px;
+            height: 150px;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .genre-btn:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        .hidden {
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                opacity: 0 !important;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+        .section_premium_circle { margin: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); height: 900px; /* Set a fixed height */transition: height 0.5s, margin 0.5s, padding 0.5s, opacity 0.5s;}
+        .section-title-premium-circle { font-size: 2.5rem; font-weight: bold; }
+        .banner-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .carousel-banners {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .carousel-banners img {
+            width: 350px;
+            height: 400px;
+            border-radius: 50%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+            transform: scale(0.8);
+        }
+
+        .carousel-banners img.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+    <script type="text/javascript">
+    if (window.CleverTap) { }
+    else {
+      var clevertap = {
+        event: [],
+        profile: [],
+        account: [],
+        onUserLogin: [],
+        notifications: [],
+        privacy: [],
+        token: "TEST-4c1-3c3",
+      };
+      clevertap.account.push({ "id": "TEST-K9K-Z94-R46Z" });
+
+      clevertap.privacy.push({ optOut: false });
+
+      (function () {
+        var wzrk = document.createElement("script");
+            wzrk.type = "text/javascript";
+            wzrk.async = true;
+            wzrk.src =
+              ("https:" == document.location.protocol
+              ? "https://d2r1yp2w7bby2u.cloudfront.net"
+              : "http://static.clevertap.com") + "/js/clevertap.min.js";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(wzrk, s);
+      })();
+
+      
+    }
+    console.log("Web SDK called");
+
+  </script>
+  <!-- <script>
+      function toggleSwitch() {
+          const toggle = document.querySelector('.toggle-switch');
+          toggle.classList.toggle('active');
+      }
+  </script> -->
+</head>
+<body>
+
+    <div class="header">
+        <div class="price"><img src="https://flagcdn.com/w40/gb.png" alt="UK Flag"> £8.44</div>
+        <div class="brand"><i class="fas fa-tv"></i> Charles' Watch</div>
+        <div class="toggle-container">
+            <i class="fas fa-user"></i>
+            <div class="toggle-switch" onclick="toggleSwitch()"></div>
+            <i class="fas fa-crown"></i>
+        </div>
+    </div>
+
+    <div class="content-container">
+
+
+        <div class="section_premium_circle" style="display: none;">
+            <h2 class="section-title-premium-circle">Premium Content</h2>
+            <div class="carousel-banners" id="premiumCarousel">
+                <img src="https://via.placeholder.com/350x400" alt="Carousel Banner 1" class="premium-img-circle1 active" style="display: none;">
+                <img src="https://via.placeholder.com/350x400" alt="Carousel Banner 2" class="premium-img-circle2" style="display: none;">
+                <img src="https://via.placeholder.com/350x400" alt="Carousel Banner 3" class="premium-img-circle3" style="display: none;">
+                <img src="https://via.placeholder.com/350x400" alt="Carousel Banner 4" class="premium-img-circle4" style="display: none;">
+            </div>
+        </div>
+
+        <div class="section_premium" style="display: none;">
+            <h2 class="section-title-premium">Premium Content</h2>
+            <div class="banner-carousel" id="premiumCarousel">
+                <img src="https://via.placeholder.com/800x400" alt="Banner 1" class="premium-img-1" style="display: none;">
+                <img src="https://via.placeholder.com/800x400/ff6347" alt="Banner 2" class="premium-img-2" style="display: none;">
+                <img src="https://via.placeholder.com/800x400/4682b4" alt="Banner 3" class="premium-img-3" style="display: none;">
+                <img src="https://via.placeholder.com/800x400/4682b4" alt="Banner 4" class="premium-img-4" style="display: none;">
+            </div>
+        </div>
+
+        <div class="section_yaml" style="display: none;">
+            <h2 class="section-title-yaml">You may also like</h2>
+            <div class="carousel">
+                <div class="card"><img src="https://via.placeholder.com/250x350" alt="Movie" style="display: none;" class="yaml-img-1"></div>
+                <div class="card"><img src="https://via.placeholder.com/250x350" alt="Movie" style="display: none;" class="yaml-img-2"></div>
+                <div class="card"><img src="https://via.placeholder.com/250x350" alt="Movie" style="display: none;" class="yaml-img-3"></div>
+                <div class="card"><img src="https://via.placeholder.com/250x350" alt="Movie" style="display: none;" class="yaml-img-4"></div>
+                <div class="card"><img src="https://via.placeholder.com/250x350" alt="Movie" style="display: none;" class="yaml-img-5"></div>
+                <div class="card"><img src="https://via.placeholder.com/250x350" alt="Movie" style="display: none;" class="yaml-img-6"></div>
+                <div class="card"><img src="https://via.placeholder.com/250x350" alt="Movie" style="display: none;" class="yaml-img-7"></div>
+            </div>
+        </div>
+
+        <div class="section_na" style="display: none;">
+            <h2 class="section-title-na">New Additions</h2>
+            <div class="carousel new-additions">
+                <div class="card"><img src="https://via.placeholder.com/300x200" alt="Movie" style="display: none;" class="na-img-1"></div>
+                <div class="card"><img src="https://via.placeholder.com/300x200" alt="Movie" style="display: none;" class="na-img-2"></div>
+                <div class="card"><img src="https://via.placeholder.com/300x200" alt="Movie" style="display: none;" class="na-img-3"></div>
+                <div class="card"><img src="https://via.placeholder.com/300x200" alt="Movie" style="display: none;" class="na-img-4"></div>
+                <div class="card"><img src="https://via.placeholder.com/300x200" alt="Movie" style="display: none;" class="na-img-5"></div>
+                <div class="card"><img src="https://via.placeholder.com/300x200" alt="Movie" style="display: none;" class="na-img-6"></div>
+            </div>
+        </div>
+
+        <div class="section_genre">
+            <h2 class="section-title-genre">Genres</h2>
+            <div class="genre-buttons">
+                <button class="genre-btn" style="background: #ff6f61;" onclick="setGenre('Comedy')">Comedy</button>
+                <button class="genre-btn" style="background: #673ab7;" onclick="setGenre('Horror')">Horror</button>
+                <button class="genre-btn" style="background: #ff9800;" onclick="setGenre('Thriller')">Thriller</button>
+                <button class="genre-btn" style="background: #e91e63;" onclick="setGenre('Romantic')">Romantic</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+
+  //////////// PE Related Code /////////////////
+  var varAmount,varFlag,nAddTheme,premiumBannerCnt,premiumBannerImg,YAMLThemeData,isPremium;
+  
+      
+      function initializePEVariables() {
+          console.log("In initializePEVariables")
+          clevertap.setLogLevel(4)
+          varAmount = clevertap.defineVariable("Website.Currency.amount", "₹888");
+          varFlag = clevertap.defineVariable("Website.Currency.flag", "https://i.ibb.co/ccYSMJmD/India.png");
+          nAddTheme = clevertap.defineVariable("Website.NAdd.themeData","https://imgs.search.brave.com/B-Ck-RKMBCAu0tNnOZ3Zu_jhDYP3r0Lp9tDSQFXuD-8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzhiLzBm/L2JlLzhiMGZiZTgy/YzNmNWJiNzNlY2E5/ZjU1N2U4YTk4Nzlj/LmpwZw");
+          premiumBannerCnt = clevertap.defineVariable("Website.premium.premium_banner_cnt",4);
+          premiumBannerImg = clevertap.defineVariable("Website.premium.premium_banner_img","https://assets.mubicdn.net/images/notebook/post_images/26978/images-w1400.jpg?1541739416");
+          YAMLThemeData = clevertap.defineVariable("Website.YAML.themeData","https://via.placeholder.com/250x350");
+          isPremium = clevertap.defineVariable("Website.isPremium",true);
+
+          clevertap.syncVariables(
+              function () { console.log("Sync successful"); },
+              function () { console.log("Sync failed"); }
+          );
+
+          fetchPEVariables()
+          //updateUI();
+      }
+      window.onload = initializePEVariables;
+
+      function fetchPEVariables() {
+          clevertap.fetchVariables(function () {
+              console.log("Fetch successful");
+              var isPrem = isPremium.getValue();
+              if(isPrem){
+                updateUIPremium();
+              }
+              else{
+                updateUIBasic();
+              }
+          });
+      }
+
+      function initializeCarousel(count) {
+            const images = document.querySelectorAll('.carousel-banners img');
+            let currentIndex = 0;
+
+            // Display only the required number of slides
+            images.forEach((img, index) => {
+                img.style.display = index < count ? 'block' : 'none';
+                img.classList.remove('active');
+            });
+
+            if (count > 1) {
+                images[0].classList.add('active');
+
+                function showNextImage() {
+                    const visibleImages = document.querySelectorAll('.carousel-banners img[style*="display: block"]');
+                    visibleImages.forEach(img => img.classList.remove('active'));
+                    currentIndex = (currentIndex + 1) % visibleImages.length;
+                    visibleImages[currentIndex].classList.add('active');
+                }
+
+                setInterval(showNextImage, 2500);
+            }
+        }
+
+      function updateUIPremium() {
+
+        const amount = varAmount.getValue();
+        const flag = varFlag.getValue();
+        const priceDiv = document.querySelector('.price');
+        const count = premiumBannerCnt.getValue();
+        const imgData = JSON.parse(premiumBannerImg.getValue());
+        //console.log(premiumBannerImg.getValue());
+        const yamlTheme = JSON.parse(YAMLThemeData.getValue());
+        const naddTheme = JSON.parse(nAddTheme.getValue());
+
+        console.log(imgData.circle)
+
+        priceDiv.innerHTML = `<img src="${flag}" alt="Country Flag"> ${amount}`;
+
+        
+
+        document.querySelectorAll('.section_yaml').forEach(section => {
+            section.style.display = 'block';
+        });
+        document.querySelectorAll('.section_na').forEach(section => {
+            section.style.display = 'block';
+        });
+
+
+        if(imgData.circle == "true"){
+            document.querySelectorAll('.section_premium_circle').forEach(section => {
+                section.style.display = 'block';
+            });
+            const premiumSection = document.querySelector('.section_premium_circle');
+            premiumSection.classList.remove('hidden');
+        }else{
+            document.querySelectorAll('.section_premium').forEach(section => {
+                section.style.display = 'block';
+            });
+            const premiumSection = document.querySelector('.section_premium');
+            premiumSection.classList.remove('hidden');
+        }
+
+        
+
+        //console.log(yamlTheme.bg_img);
+
+
+        document.body.style.background = yamlTheme.bg_img;
+        document.body.style.backgroundSize = "cover"; // Adjust to your preference (cover, contain, etc.)
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundPosition = "center center";
+
+        const headers = document.querySelectorAll('.header');
+            headers.forEach(header => {
+                    header.style.background = yamlTheme.bg_img; // Apply the background change
+                });
+
+        const sections = document.querySelectorAll('.section_premium, .section_premium_circle, .section_na, .section_yaml, .section_genre');
+            sections.forEach(section => {
+            section.style.background = yamlTheme.bg_img; // Change to desired background color
+        });
+
+                    // Change title text color for all titles
+        const titles = document.querySelectorAll('.section-title-premium, .section-title-premium-circle, .section-title-na, .section-title-yaml, .section-title-genre, .price');
+            titles.forEach(title => {
+            title.style.color = yamlTheme.txt_color; 
+            title.style.textShadow = yamlTheme.text_shadow;
+        });
+
+        // console.log(count);
+        // console.log(naddTheme);
+
+        if(count == 1){
+            if(imgData.circle == "true"){
+                document.querySelector('.premium-img-circle1').src = imgData.img1;
+                document.querySelector('.premium-img-circle1').style.display = 'block';
+            }else{
+                document.querySelector('.premium-img-1').src = imgData.img1;
+                document.querySelector('.premium-img-1').style.display = 'block';
+            }
+
+        }
+
+        else if (count == 2){
+
+            if(imgData.circle == "true"){
+
+                document.querySelector('.premium-img-circle1').src = imgData.img1;
+                document.querySelector('.premium-img-circle1').style.display = 'block';
+
+                document.querySelector('.premium-img-circle2').src = imgData.img2;
+                document.querySelector('.premium-img-circle2').style.display = 'block';
+            }else{
+
+                document.querySelector('.premium-img-1').src = imgData.img1;
+                document.querySelector('.premium-img-1').style.display = 'block';
+
+                document.querySelector('.premium-img-2').src = imgData.img2;
+                document.querySelector('.premium-img-2').style.display = 'block';
+
+            }
+
+        }
+
+        else if(count == 3){
+            if(imgData.circle == "true"){
+                document.querySelector('.premium-img-circle1').src = imgData.img1;
+                document.querySelector('.premium-img-circle1').style.display = 'block';
+
+                document.querySelector('.premium-img-circle2').src = imgData.img2;
+                document.querySelector('.premium-img-circle2').style.display = 'block';
+
+                document.querySelector('.premium-img-circle3').src = imgData.img3;
+                document.querySelector('.premium-img-circle3').style.display = 'block';
+            }else{
+                document.querySelector('.premium-img-1').src = imgData.img1;
+                document.querySelector('.premium-img-1').style.display = 'block';
+
+                document.querySelector('.premium-img-2').src = imgData.img2;
+                document.querySelector('.premium-img-2').style.display = 'block';
+
+                document.querySelector('.premium-img-3').src = imgData.img3;
+                document.querySelector('.premium-img-3').style.display = 'block';
+            }
+        }
+
+        else{
+
+            if(imgData.circle == "true"){
+
+                document.querySelector('.premium-img-circle1').src = imgData.img1;
+                document.querySelector('.premium-img-circle1').style.display = 'block';
+
+                document.querySelector('.premium-img-circle2').src = imgData.img2;
+                document.querySelector('.premium-img-circle2').style.display = 'block';
+
+                document.querySelector('.premium-img-circle3').src = imgData.img3;
+                document.querySelector('.premium-img-circle3').style.display = 'block';
+
+                document.querySelector('.premium-img-circle4').src = imgData.img4;
+                document.querySelector('.premium-img-circle4').style.display = 'block';
+            }else{
+
+                document.querySelector('.premium-img-1').src = imgData.img1;
+                document.querySelector('.premium-img-1').style.display = 'block';
+
+                document.querySelector('.premium-img-2').src = imgData.img2;
+                document.querySelector('.premium-img-2').style.display = 'block';
+
+                document.querySelector('.premium-img-3').src = imgData.img3;
+                document.querySelector('.premium-img-3').style.display = 'block';
+
+                document.querySelector('.premium-img-4').src = imgData.img4;
+                document.querySelector('.premium-img-4').style.display = 'block';
+            }
+
+        }
+
+        if(count>1){
+            if(imgData.circle == "true"){
+                initializeCarousel(count)
+            }else{
+                let currentSlide = 0;
+
+                // Display only the required number of slides
+                const slides = document.querySelectorAll('.banner-carousel img');
+                slides.forEach((slide, index) => {
+                    if (index < count) {
+                        slide.style.display = 'block';
+                    } else {
+                        slide.style.display = 'none';
+                    }
+                });
+
+                function nextSlide() {
+                    const visibleSlides = document.querySelectorAll('.banner-carousel img[style*="display: block"]');
+                    currentSlide = (currentSlide + 1) % visibleSlides.length;
+                    visibleSlides.forEach((slide, index) => {
+                        slide.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    });
+                }
+
+                setInterval(nextSlide, 3000);
+            }
+        }
+
+        //YAML section
+        document.querySelector('.yaml-img-1').src = yamlTheme.img1;
+        document.querySelector('.yaml-img-1').style.display = 'block';
+
+        document.querySelector('.yaml-img-2').src = yamlTheme.img2;
+        document.querySelector('.yaml-img-2').style.display = 'block';
+
+        document.querySelector('.yaml-img-3').src = yamlTheme.img3;
+        document.querySelector('.yaml-img-3').style.display = 'block';
+
+        document.querySelector('.yaml-img-4').src = yamlTheme.img4;
+        document.querySelector('.yaml-img-4').style.display = 'block';
+
+        document.querySelector('.yaml-img-5').src = yamlTheme.img5;
+        document.querySelector('.yaml-img-5').style.display = 'block';
+
+        document.querySelector('.yaml-img-6').src = yamlTheme.img6;
+        document.querySelector('.yaml-img-6').style.display = 'block';
+
+        document.querySelector('.yaml-img-7').src = yamlTheme.img7;
+        document.querySelector('.yaml-img-7').style.display = 'block';
+
+        //New Addition Section
+        document.querySelector('.na-img-1').src = naddTheme.img1;
+        document.querySelector('.na-img-1').style.display = 'block';
+
+        document.querySelector('.na-img-2').src = naddTheme.img2;
+        document.querySelector('.na-img-2').style.display = 'block';
+
+        document.querySelector('.na-img-3').src = naddTheme.img3;
+        document.querySelector('.na-img-3').style.display = 'block';
+
+        document.querySelector('.na-img-4').src = naddTheme.img4;
+        document.querySelector('.na-img-4').style.display = 'block';
+
+        document.querySelector('.na-img-5').src = naddTheme.img5;
+        document.querySelector('.na-img-5').style.display = 'block';
+
+        document.querySelector('.na-img-6').src = naddTheme.img6;
+        document.querySelector('.na-img-6').style.display = 'block';
+
+    }
+
+    function updateUIBasic() {
+
+        const amount = varAmount.getValue();
+        const flag = varFlag.getValue();
+        const priceDiv = document.querySelector('.price');
+
+        priceDiv.innerHTML = `<img src="${flag}" alt="Country Flag"> ${amount}`;
+
+        document.querySelectorAll('.section_premium').forEach(section => {
+            section.style.display = 'block';
+        });
+
+        document.querySelectorAll('.section_yaml').forEach(section => {
+            section.style.display = 'block';
+        });
+        document.querySelectorAll('.section_na').forEach(section => {
+            section.style.display = 'block';
+        });
+
+        const premiumSection = document.querySelector('.section_premium');
+        premiumSection.classList.add('hidden');
+
+        const premiumSectionCircle = document.querySelector('.section_premium_circle');
+        premiumSectionCircle.classList.add('hidden');
+
+        const yamlTheme = JSON.parse(YAMLThemeData.getValue());
+        const naddTheme = JSON.parse(nAddTheme.getValue());
+
+        //console.log(yamlTheme.bg_img);
+
+
+        document.body.style.background = yamlTheme.bg_img;
+        document.body.style.backgroundSize = "cover"; // Adjust to your preference (cover, contain, etc.)
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundPosition = "center center";
+
+        const headers = document.querySelectorAll('.header');
+            headers.forEach(header => {
+                    header.style.background = yamlTheme.bg_img; // Apply the background change
+                });
+
+        const sections = document.querySelectorAll('.section_premium, .section_na, .section_yaml, .section_genre');
+            sections.forEach(section => {
+            section.style.background = yamlTheme.bg_img; // Change to desired background color
+        });
+
+                    // Change title text color for all titles
+        const titles = document.querySelectorAll('.section-title-premium, .section-title-na, .section-title-yaml, .section-title-genre, .price');
+            titles.forEach(title => {
+            title.style.color = yamlTheme.txt_color; 
+            title.style.textShadow = yamlTheme.text_shadow;
+        });
+
+        //YAML section
+        document.querySelector('.yaml-img-1').src = yamlTheme.img1;
+        document.querySelector('.yaml-img-1').style.display = 'block';
+
+        document.querySelector('.yaml-img-2').src = yamlTheme.img2;
+        document.querySelector('.yaml-img-2').style.display = 'block';
+
+        document.querySelector('.yaml-img-3').src = yamlTheme.img3;
+        document.querySelector('.yaml-img-3').style.display = 'block';
+
+        document.querySelector('.yaml-img-4').src = yamlTheme.img4;
+        document.querySelector('.yaml-img-4').style.display = 'block';
+
+        document.querySelector('.yaml-img-5').src = yamlTheme.img5;
+        document.querySelector('.yaml-img-5').style.display = 'block';
+
+        document.querySelector('.yaml-img-6').src = yamlTheme.img6;
+        document.querySelector('.yaml-img-6').style.display = 'block';
+
+        document.querySelector('.yaml-img-7').src = yamlTheme.img7;
+        document.querySelector('.yaml-img-7').style.display = 'block';
+
+        //New Addition Section
+        document.querySelector('.na-img-1').src = naddTheme.img1;
+        document.querySelector('.na-img-1').style.display = 'block';
+
+        document.querySelector('.na-img-2').src = naddTheme.img2;
+        document.querySelector('.na-img-2').style.display = 'block';
+
+        document.querySelector('.na-img-3').src = naddTheme.img3;
+        document.querySelector('.na-img-3').style.display = 'block';
+
+        document.querySelector('.na-img-4').src = naddTheme.img4;
+        document.querySelector('.na-img-4').style.display = 'block';
+
+        document.querySelector('.na-img-5').src = naddTheme.img5;
+        document.querySelector('.na-img-5').style.display = 'block';
+
+        document.querySelector('.na-img-6').src = naddTheme.img6;
+        document.querySelector('.na-img-6').style.display = 'block';
+
+    }
+
+      
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+            const toggleState = localStorage.getItem("toggleState") || "off";
+            const toggleSwitch = document.querySelector(".toggle-switch");
+
+            if (toggleSwitch) {
+                if (toggleState === "on") {
+                    toggleSwitch.classList.add("active");
+                    
+                } else {
+                    toggleSwitch.classList.remove("active");
+                    
+                }
+            }
+        });
+
+        function toggleSwitch() {
+            const toggle = document.querySelector('.toggle-switch');
+            toggle.classList.toggle('active');
+
+            if (toggle.classList.contains("active")) {
+                localStorage.setItem("toggleState", "on");
+                clevertap.profile.push({
+                        "Site": {
+                            "Subscription Type": "Premium User"
+                        }
+                });
+                console.log("User switched to Premium");
+            } else {
+                localStorage.setItem("toggleState", "off");
+                clevertap.profile.push({
+                        "Site": {
+                            "Subscription Type": "Basic User"
+                        }
+                });
+                console.log("User switched to Basic");
+            }
+        }
+
+        function setGenre(genre) {
+            // Send the selected genre to CleverTap
+            clevertap.profile.push({
+                "Site": {
+                    "Preferred Genre": genre
+                }
+            });
+
+            // Log for debugging (optional)
+            console.log("Preferred Genre sent to CleverTap:", genre);
+        }
+</script>
+
+</body>
+</html>
