@@ -38,6 +38,9 @@
         .section_genre { margin: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
         .section-title-genre { font-size: 2.5rem; font-weight: bold; }
 
+        .section_userp { margin: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .section-title-userp { font-size: 2.5rem; font-weight: bold; }
+
         .carousel { display: flex; overflow-x: scroll; gap: 15px; padding: 0 10px 15px 10px; scroll-snap-type: x mandatory; /* Optional: for smooth snapping to the next card */}
         .carousel::-webkit-scrollbar {
             height: 5px; /* Optional: Custom scrollbar styling */
@@ -103,6 +106,33 @@
         }
 
         .genre-btn:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .userp-buttons {
+            display: flex;
+            gap: 20px;
+            padding: 15px 10px;
+            justify-content: center;
+        }
+
+        .userp-btn {
+            width: 520px;
+            height: 150px;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .userp-btn:hover {
             transform: scale(1.05);
             filter: brightness(1.1);
         }
@@ -245,6 +275,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <button class="genre-btn" style="background: #e91e63;" onclick="setGenre('Romantic')">Romantic</button>
             </div>
         </div>
+
+        <div class="section_userp">
+            <h2 class="section-title-userp">Genres</h2>
+            <div class="userp-buttons">
+                <button class="userp-btn" style="background: #ff6f61;" onclick="onUserLoginGTM()">On User Login</button>
+                <button class="userp-btn" style="background: #673ab7;" onclick="eventPushGTM()">Product Viewed Event</button>
+                <button class="userp-btn" style="background: #ff9800;" onclick="pushProfileGTM()">Pushing Profile Updates</button>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -365,13 +404,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     header.style.background = yamlTheme.bg_img; // Apply the background change
                 });
 
-        const sections = document.querySelectorAll('.section_premium, .section_premium_circle, .section_na, .section_yaml, .section_genre');
+        const sections = document.querySelectorAll('.section_premium, .section_premium_circle, .section_na, .section_yaml, .section_genre, .section_userp');
             sections.forEach(section => {
             section.style.background = yamlTheme.bg_img; // Change to desired background color
         });
 
                     // Change title text color for all titles
-        const titles = document.querySelectorAll('.section-title-premium, .section-title-premium-circle, .section-title-na, .section-title-yaml, .section-title-genre, .price');
+        const titles = document.querySelectorAll('.section-title-premium, .section-title-premium-circle, .section-title-na, .section-title-yaml, .section-title-genre, .section-title-userp, .price');
             titles.forEach(title => {
             title.style.color = yamlTheme.txt_color; 
             title.style.textShadow = yamlTheme.text_shadow;
@@ -687,6 +726,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             // Log for debugging (optional)
             console.log("Preferred Genre sent to CleverTap:", genre);
         }
+</script>
+
+<script>
+    function onUserLoginGTM() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'Logging profile',
+                'Email': 'neha10@clevertap.com',
+                'Identity': 'yadav10',
+                'Name': 'Neha Yadav'
+            });
+            console.log("CleverTap Integration Event Raised to GTM")
+    }
+
+    function eventPushGTM() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'Product Viewed'
+            });
+            console.log("CleverTap Integration Event Raised to GTM")
+    }
+
+    function pushProfileGTM() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'Push Profile GTM'
+            });
+            console.log("CleverTap Integration Event Raised to GTM")
+    }
 </script>
 
 </body>
