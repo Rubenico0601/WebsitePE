@@ -146,39 +146,7 @@
             transform: scale(1);
         }
     </style>
-    <script type="text/javascript">
-    if (window.CleverTap) { }
-    else {
-      var clevertap = {
-        event: [],
-        profile: [],
-        account: [],
-        onUserLogin: [],
-        notifications: [],
-        privacy: [],
-        token: "TEST-4c1-3c3",
-      };
-      clevertap.account.push({ "id": "TEST-K9K-Z94-R46Z" });
-
-      clevertap.privacy.push({ optOut: false });
-
-      (function () {
-        var wzrk = document.createElement("script");
-            wzrk.type = "text/javascript";
-            wzrk.async = true;
-            wzrk.src =
-              ("https:" == document.location.protocol
-              ? "https://d2r1yp2w7bby2u.cloudfront.net"
-              : "http://static.clevertap.com") + "/js/clevertap.min.js";
-            var s = document.getElementsByTagName("script")[0];
-            s.parentNode.insertBefore(wzrk, s);
-      })();
-
-      
-    }
-    console.log("Web SDK called");
-
-  </script>
+    
   <!-- <script>
       function toggleSwitch() {
           const toggle = document.querySelector('.toggle-switch');
@@ -192,6 +160,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-KBWTT67L');</script>
 <!-- End Google Tag Manager -->
+
+<script>
+    function GTMCleverTapIntegrationCall() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'CleverTap Initialize'
+            });
+            console.log("CleverTap Integration Event Raised to GTM")
+    }
+    document.addEventListener("DOMContentLoaded", GTMCleverTapIntegrationCall);
+</script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
