@@ -201,6 +201,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     document.addEventListener("DOMContentLoaded", GTMCleverTapIntegrationCall);
 </script>
+<script>
+    function redirectToRuben() {
+      window.location.href = 'ruben.html';
+    }
+  </script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -282,6 +287,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <button class="userp-btn" style="background: #ff6f61;" onclick="onUserLoginGTM()">On User Login</button>
                 <button class="userp-btn" style="background: #673ab7;" onclick="eventPushGTM()">Product Viewed Event</button>
                 <button class="userp-btn" style="background: #ff9800;" onclick="pushProfileGTM()">Pushing Profile Updates</button>
+                <button class="userp-btn" style="background: #ff9800;" onclick="redirectToRuben">Redirecting to Ruben</button>
             </div>
         </div>
     </div>
