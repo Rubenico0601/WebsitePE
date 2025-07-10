@@ -325,6 +325,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
         </div>
     </div>
+    <div id="customBannerContainer" style="display: none; position: relative; max-width: 100%; margin: 20px auto;">
+        <div class="close" style="position: absolute; top: 5px; right: 10px; font-size: 24px; cursor: pointer;">&times;</div>
+        <a id="bannerLink" href="#" target="_blank">
+            <img id="bannerImage" src="" alt="Promotional Banner" style="width: 100%; height: auto; border-radius: 8px;" />
+        </a>
+    </div>
+
+<script>
+  function renderDSPTestBanner(data) {
+    const imgURL = data.kv.imgURL;
+    const bannerLink = data.kv.bannerLink;
+
+    const container = document.getElementById('customBannerContainer');
+    const bannerImage = document.getElementById('bannerImage');
+    const bannerAnchor = document.getElementById('bannerLink');
+
+    // Populate image and link
+    bannerImage.src = imgURL;
+    bannerAnchor.href = bannerLink;
+
+    // Show the banner
+    container.style.display = 'block';
+
+    // CleverTap event for viewed
+    clevertap.renderNotificationViewed(data);
+
+    // CleverTap event for clicked
+    bannerAnchor.addEventListener('click', () => {
+      clevertap.renderNotificationClicked(data);
+    });
+
+    // Close button logic
+    container.querySelector('.close').addEventListener('click', () => {
+      container.style.display = 'none';
+    });
+  }
+
+  // Listen for native display event
+  document.addEventListener("CT_web_native_display", function(event) {
+    const data = event.detail;
+    const topic = data.kv.topic;
+
+    switch (topic) {
+      case "DSPTest":
+        renderDSPTestBanner(data);
+        break;
+      // add more cases for other topics here
+    }
+  });
+</script>
+
 
 <script>
 
