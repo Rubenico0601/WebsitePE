@@ -337,6 +337,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const imgURL = data.kv.imgURL;
     const bannerLink = data.kv.bannerLink;
 
+    console.log(imgURL);
+    console.log(bannerLink);
+
     const container = document.getElementById('customBannerContainer');
     const bannerImage = document.getElementById('bannerImage');
     const bannerAnchor = document.getElementById('bannerLink');
@@ -366,6 +369,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   document.addEventListener("CT_web_native_display", function(event) {
     const data = event.detail;
     const topic = data.kv.topic;
+
+    console.log(topic);
 
     switch (topic) {
       case "DSPTest":
